@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateCandyDto {
   @IsString()
@@ -7,11 +7,13 @@ export class CreateCandyDto {
 
   @IsString()
   @IsNotEmpty()
-  category: number;
+  category: string;
 
   @IsString()
-  description: number;
+  @IsOptional()
+  description?: string;
 
   @IsNumber()
-  value: number;
+  @IsOptional()
+  value?: number;
 }

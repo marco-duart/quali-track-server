@@ -9,9 +9,9 @@ import { AuthModule } from './auth/auth.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
-    AuthModule,
     CandiesModule,
     UsersModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

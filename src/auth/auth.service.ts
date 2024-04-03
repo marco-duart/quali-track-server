@@ -19,9 +19,9 @@ export class AuthService {
       }
 
       const payload = {
-        iss: 'arnia_cars',
+        iss: 'candy_store',
         sub: 'users_auth',
-        aud: 'arnia_cars_users',
+        aud: 'candy_store_users',
         userEmail: user.email,
         userId: user.id,
       };

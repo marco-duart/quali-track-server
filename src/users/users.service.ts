@@ -1,4 +1,8 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -71,6 +75,14 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    return 
+    try {
+      await this.findOne(id);
+
+      await this.userRepository.delete(id);
+
+      return { status: 'ok' };
+    } catch (error) {
+      throw new NotFoundException(error?.message);
+    }
   }
 }
