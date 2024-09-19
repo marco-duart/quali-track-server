@@ -1,0 +1,2 @@
+class CriticalFieldsController < ApplicationController
+end
