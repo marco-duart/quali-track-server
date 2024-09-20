@@ -50,9 +50,8 @@ class UsersController < ApplicationController
   end
 
   def authorize_admin_or_manager_or_monitor
-    return unless current_user.admin? || current_user.manager? || current_user.monitor?
+    return if current_user.admin? || current_user.manager? || current_user.monitor?
 
-    render json: { error: 'Not authorized' },
-           status: :forbidden
+    render json: { error: 'Not authorized' }, status: :forbidden
   end
 end

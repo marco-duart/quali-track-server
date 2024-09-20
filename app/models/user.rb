@@ -7,6 +7,7 @@ class User < ApplicationRecord
   enum role: { employee: 0, monitor: 1, manager: 2, admin: 3 }
 
   validates :role, presence: true
+  validates :team, presence: true, if: :employee?
 
   before_save :set_default_role, if: :new_record?
 

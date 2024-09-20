@@ -41,7 +41,7 @@ class SignaturesController < ApplicationController
   end
 
   def signature_params
-    params.require(:signature).permit(:status, :evaluation_id, :user_id)
+    params.require(:signature).permit(:status, :evaluation_id, :user_id, :manager_id, :employee_id)
   end
 
   def authorize_admin_or_manager_or_monitor

@@ -2,7 +2,6 @@ class TeamsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_team, only: %i[show update destroy]
   before_action :authorize_admin_or_manager, only: %i[index create update destroy]
-  before_action :authorize_admin, only: [:show]
 
   def index
     @teams = Team.all
@@ -46,7 +45,9 @@ class TeamsController < ApplicationController
   end
 
   def authorize_admin_or_manager
-    render json: { error: 'Not authorized' }, status: :forbidden unless current_user.admin? || current_user.manager?
+    return if current_user.admin? || (current_user.manager? && current_user.managed_teams.exists?(params[:id]))
+
+    render json: { error: 'Not authorized' }, status: :forbidden
   end
 
   def authorize_admin
