@@ -4,6 +4,7 @@ class CreateQuestions < ActiveRecord::Migration[7.1]
       t.string :title
       t.text :description
       t.decimal :score
+      t.boolean :active, default: true
 
       t.timestamps
     end

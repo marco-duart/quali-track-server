@@ -1,15 +1,11 @@
 class CriticalFieldsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_critical_field, only: %i[show update destroy]
-  before_action :authorize_admin_or_manager_or_monitor
+  before_action :set_critical_field, only: %i[show update destroy deactivate]
+  before_action :authorize_admin_or_monitor, only: %i[create update destroy deactivate]
 
   def index
-    @critical_fields = CriticalField.all
+    @critical_fields = CriticalField.where(active: true)
     render json: @critical_fields
-  end
-
-  def show
-    render json: @critical_field
   end
 
   def create
@@ -29,9 +25,9 @@ class CriticalFieldsController < ApplicationController
     end
   end
 
-  def destroy
-    @critical_field.destroy
-    head :no_content
+  def deactivate
+    @critical_field.update(active: false)
+    render json: { message: 'Critical field successfully deactivated.' }
   end
 
   private
@@ -41,11 +37,11 @@ class CriticalFieldsController < ApplicationController
   end
 
   def critical_field_params
-    params.require(:critical_field).permit(:description, :penalty_percentage, :evaluation_id)
+    params.require(:critical_field).permit(:description, :penalty_percentage, :active)
   end
 
-  def authorize_admin_or_manager_or_monitor
-    return unless current_user.admin? || current_user.manager? || current_user.monitor?
+  def authorize_admin_or_monitor
+    return unless current_user.admin? || current_user.monitor?
 
     render json: { error: 'Not authorized' },
            status: :forbidden

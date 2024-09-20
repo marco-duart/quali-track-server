@@ -26,7 +26,22 @@ class EvaluationsController < ApplicationController
 
   def create
     @evaluation = Evaluation.new(evaluation_params)
+
     if @evaluation.save
+      if params[:question_ids].present?
+        params[:question_ids].each do |question_id|
+          @evaluation.evaluation_questions.build(question_id:)
+        end
+      end
+
+      if params[:critical_field_ids].present?
+        params[:critical_field_ids].each do |critical_field_id|
+          @evaluation.evaluation_critical_fields.build(critical_field_id:)
+        end
+      end
+
+      @evaluation.save
+
       render json: @evaluation, status: :created, location: @evaluation
     else
       render json: @evaluation.errors, status: :unprocessable_entity
@@ -53,9 +68,7 @@ class EvaluationsController < ApplicationController
   end
 
   def evaluation_params
-    params.require(:evaluation).permit(:name, :user_id, :team_id, :monitor_id,
-                                       questions_attributes: %i[id content weight _destroy],
-                                       critical_fields_attributes: %i[id description penalty_percentage _destroy])
+    params.require(:evaluation).permit(:name, :user_id, :team_id, :monitor_id, :date, :comment)
   end
 
   def authorize_admin_or_manager_or_monitor
