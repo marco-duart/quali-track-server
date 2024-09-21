@@ -6,8 +6,8 @@ class EvaluationsController < ApplicationController
   def index
     @evaluations = Evaluation.includes(:questions, :answers, :critical_fields, :employee, :monitor, :team).all
     render json: @evaluations.as_json(include: {
-                                        questions: { include: :answers },
-                                        critical_fields: { only: %i[description penalty_percentage] },
+                                        evaluation_questions: { only: %i[evaluation_id question_id] },
+                                        evaluation_critical_fields: { only: %i[evaluation_id critical_field_id] },
                                         employee: { only: %i[id email] },
                                         monitor: { only: %i[id email] },
                                         team: { only: %i[id name] }
@@ -16,8 +16,8 @@ class EvaluationsController < ApplicationController
 
   def show
     render json: @evaluation.as_json(include: {
-                                       questions: { include: :answers },
-                                       critical_fields: { only: %i[description penalty_percentage] },
+                                       evaluation_questions: { only: %i[evaluation_id question_id] },
+                                       evaluation_critical_fields: { only: %i[evaluation_id critical_field_id] },
                                        employee: { only: %i[id email] },
                                        monitor: { only: %i[id email] },
                                        team: { only: %i[id name] }
@@ -40,7 +40,9 @@ class EvaluationsController < ApplicationController
         end
       end
 
-      @evaluation.save
+      @evaluation.transaction do
+        @evaluation.save!
+      end
 
       render json: @evaluation, status: :created, location: @evaluation
     else
@@ -68,11 +70,11 @@ class EvaluationsController < ApplicationController
   end
 
   def evaluation_params
-    params.require(:evaluation).permit(:name, :user_id, :team_id, :monitor_id, :date, :comment)
+    params.require(:evaluation).permit(:employee_id, :team_id, :monitor_id, :date, :comment, :total_score)
   end
 
   def authorize_admin_or_manager_or_monitor
-    return unless current_user.admin? || current_user.manager? || current_user.monitor?
+    return if current_user.admin? || current_user.manager? || current_user.monitor?
 
     render json: { error: 'Not authorized' },
            status: :forbidden

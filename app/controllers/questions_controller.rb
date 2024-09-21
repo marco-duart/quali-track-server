@@ -1,17 +1,20 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_question, only: %i[show update destroy]
-  before_action :authorize_admin_monitor, only: %i[create update destroy deactivate]
+  before_action :set_question, only: %i[show update deactivate]
+  before_action :authorize_admin_monitor, only: %i[create update deactivate]
 
   def index
     @questions = Question.where(active: true)
     render json: @questions
   end
 
+  def show
+  end
+
   def create
     @question = Question.new(question_params)
     if @question.save
-      render json: @question, status: :created, location: @question
+      render json: @question, status: :created
     else
       render json: @question.errors, status: :unprocessable_entity
     end
@@ -41,7 +44,7 @@ class QuestionsController < ApplicationController
   end
 
   def authorize_admin_monitor
-    return unless current_user.admin? || current_user.monitor?
+    return if current_user.admin? || current_user.monitor?
 
     render json: { error: 'Not authorized' },
            status: :forbidden

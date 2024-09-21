@@ -10,7 +10,7 @@ class Evaluation < ApplicationRecord
   has_many :critical_fields, through: :evaluation_critical_fields
   has_many :signatures, dependent: :destroy
 
-  validate :must_have_signatures
+  # validate :must_have_signatures
 
   private
 
