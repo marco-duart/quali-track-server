@@ -1,7 +1,7 @@
 class AnswersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_answer, only: %i[show update destroy]
-  before_action :authorize_admin_or_manager_or_monitor
+  before_action :authorize_monitor, only: %i[show update destroy]
 
   def index
     @answers = Answer.all
@@ -41,11 +41,11 @@ class AnswersController < ApplicationController
   end
 
   def answer_params
-    params.require(:answer).permit(:response, :score, :question_id, :user_id, :evaluation_id)
+    params.require(:answer).permit(:comment, :score, :question_id, :user_id, :evaluation_id)
   end
 
-  def authorize_admin_or_manager_or_monitor
-    return unless current_user.admin? || current_user.manager? || current_user.monitor?
+  def authorize_monitor
+    return if current_user.monitor?
 
     render json: { error: 'Not authorized' },
            status: :forbidden
