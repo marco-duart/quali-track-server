@@ -5,10 +5,10 @@ Rails.application.routes.draw do
   resources :questions
   resources :evaluations
   resources :teams
+  devise_for :users
 
   get 'up' => 'rails/health#show', as: :rails_health_check
 
-  devise_for :users, controllers: { sessions: 'users/sessions' }
   resources :users, only: %i[index show create update destroy]
 
   resources :teams, only: %i[index show create update destroy]
