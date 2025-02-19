@@ -2,6 +2,7 @@ class Evaluation < ApplicationRecord
   belongs_to :employee, class_name: 'User'
   belongs_to :monitor, class_name: 'User'
   belongs_to :team
+  belongs_to :department
 
   has_many :evaluation_questions, dependent: :destroy
   has_many :questions, through: :evaluation_questions
