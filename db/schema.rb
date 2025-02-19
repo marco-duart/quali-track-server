@@ -37,6 +37,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_19_184927) do
     t.index ["evaluation_id"], name: "index_critical_fields_on_evaluation_id"
   end
 
+  create_table "departments", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "evaluation_critical_fields", force: :cascade do |t|
     t.bigint "evaluation_id", null: false
     t.bigint "critical_field_id", null: false
@@ -64,6 +70,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_19_184927) do
     t.bigint "employee_id"
     t.bigint "monitor_id"
     t.bigint "team_id"
+    t.bigint "department_id"
+    t.index ["department_id"], name: "index_evaluations_on_department_id"
     t.index ["employee_id"], name: "index_evaluations_on_employee_id"
     t.index ["monitor_id"], name: "index_evaluations_on_monitor_id"
     t.index ["team_id"], name: "index_evaluations_on_team_id"
@@ -98,6 +106,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_19_184927) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "manager_id"
+    t.bigint "department_id"
+    t.index ["department_id"], name: "index_teams_on_department_id"
     t.index ["manager_id"], name: "index_teams_on_manager_id"
   end
 
@@ -110,7 +120,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_19_184927) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "role", default: 0, null: false
+    t.string "full_name", null: false
+    t.date "birthdate", null: false
+    t.boolean "active", default: true, null: false
     t.bigint "team_id"
+    t.bigint "department_id"
+    t.index ["department_id"], name: "index_users_on_department_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["team_id"], name: "index_users_on_team_id"
@@ -124,6 +139,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_19_184927) do
   add_foreign_key "evaluation_critical_fields", "evaluations"
   add_foreign_key "evaluation_questions", "evaluations"
   add_foreign_key "evaluation_questions", "questions"
+  add_foreign_key "evaluations", "departments"
   add_foreign_key "evaluations", "teams"
   add_foreign_key "evaluations", "users", column: "employee_id"
   add_foreign_key "evaluations", "users", column: "monitor_id"
@@ -131,6 +147,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_19_184927) do
   add_foreign_key "signatures", "evaluations"
   add_foreign_key "signatures", "users", column: "employee_id"
   add_foreign_key "signatures", "users", column: "manager_id"
+  add_foreign_key "teams", "departments"
   add_foreign_key "teams", "users", column: "manager_id"
+  add_foreign_key "users", "departments"
   add_foreign_key "users", "teams"
 end
