@@ -4,12 +4,15 @@ Rails.application.routes.draw do
   resources :answers
   resources :questions
   resources :evaluations
+  resources :departments
   resources :teams
   devise_for :users
 
   get 'up' => 'rails/health#show', as: :rails_health_check
 
   resources :users, only: %i[index show create update destroy]
+
+  resources :departments, only: %i[index show create update destroy]
 
   resources :teams, only: %i[index show create update destroy]
 
