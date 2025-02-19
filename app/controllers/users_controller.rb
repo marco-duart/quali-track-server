@@ -13,6 +13,14 @@ class UsersController < ApplicationController
     render json: @user, except: [:encrypted_password]
   end
 
+  def update
+    if @user.update(user_params)
+      render json: @user
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
+  end
+
   def destroy
     @user.destroy
     head :no_content
@@ -22,6 +30,10 @@ class UsersController < ApplicationController
 
   def set_user
     @user = User.find(params[:id])
+  end
+
+  def user_params
+    params.require(:user).permit(:full_name, :role, :birthdate, :active)
   end
 
   def authorize_admin
